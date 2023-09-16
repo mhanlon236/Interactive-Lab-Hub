@@ -170,8 +170,8 @@ g_body2 = world.CreateStaticBody(
 
 vel_iters, pos_iters = 6, 2
 time_step = 1/30
-up = (0,25)
-down = (0,-25)
+up = (0,30)
+down = (0,-30)
 stop = (0,0)
 jump = (0,100)
 
