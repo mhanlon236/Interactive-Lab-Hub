@@ -171,6 +171,10 @@ You can look in `image.py` for an example of how to display an image on the scre
 ### Set up the Display Clock Demo
 Work on `screen_clock.py`, try to show the time by filling in the while loop (at the bottom of the script where we noted "TODO" for you). You can use the code in `cli_clock.py` and `stats.py` to figure this out.
 
+**Working screen_clock implementation:**
+
+![screen_clock](https://i.imgur.com/lpqRhDY.jpg)
+
 ### How to Edit Scripts on Pi
 Option 1. One of the ways for you to edit scripts on Pi through terminal is using [`nano`](https://linuxize.com/post/how-to-use-nano-text-editor/) command. You can go into the `screen_clock.py` by typing the follow command line:
 ```
@@ -202,6 +206,11 @@ Please sketch/diagram your clock idea. (Try using a [Verplank digram](http://www
 
 **We strongly discourage and will reject the results of literal digital or analog clock display.**
 
+**Code for implementation in `sun_clock.py`**
+
+**Sketches:**
+
+![sun_clock_1](https://i.imgur.com/n2wKNXt.png)
 
 \*\*\***A copy of your code should be in your Lab 2 Github repo.**\*\*\*
 
@@ -221,9 +230,12 @@ After that, Git will ask you to login to your GitHub account to push the updates
 
 \*\*\***Take a video of your PiClock.**\*\*\*
 
+Demonstration: https://www.youtube.com/watch?v=f9iNFnLorkc
+
 ## Part G. 
 ## Sketch and brainstorm further interactions and features you would like for your clock for Part 2.
 
+![sun_clock_2](https://i.imgur.com/5vHpdNW.png)
 
 # Prep for Part 2
 
