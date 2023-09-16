@@ -72,19 +72,19 @@ backlight = digitalio.DigitalInOut(board.D22)
 backlight.switch_to_output()
 backlight.value = True
 
-#setup buttons
+# Setup buttons
 buttonA = digitalio.DigitalInOut(board.D23)
 buttonB = digitalio.DigitalInOut(board.D24)
 buttonA.switch_to_input()
 buttonB.switch_to_input()
 
-#Write intro text
+# Write intro text
 draw.text((width/2, height/2), "Select", font=font, fill="#1f1f1f", anchor = 'mm')
 disp.image(image, rotation)
 
 game_mode = 0
 
-#Loop until user inputs game mode
+# Loop until user inputs game mode
 while game_mode == 0:
     try:
         # convert user input to int within range
@@ -96,13 +96,14 @@ while game_mode == 0:
         print("Invalid game mode, try again")
         game_mode = 0
 
-#Clear screen
+# Clear screen
 draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0))
 disp.image(image, rotation)
 
-#Box2D Setup
-scale = height/10
-scale = scale
+# Box2D Setup
+
+# Scale in pixels per world unit
+scale = 15
 
 class Object:
     name = ""
@@ -117,7 +118,9 @@ class myContactListener(b2ContactListener):
         b2ContactListener.__init__(self)
 
     def BeginContact(self, contact):
-        print(contact.fixtureA.body.userData.name + "-" + contact.fixtureB.body.userData.name + " Contact")
+        print('\n' + contact.fixtureA.body.userData.name + "-" + contact.fixtureB.body.userData.name + " Contact")
+        print(contact.fixtureA.body.userData.name + " pos: (" + str(contact.fixtureA.body.position.x) + ", " + str(contact.fixtureA.body.position.y) + ")")
+        print(contact.fixtureB.body.userData.name + " pos: (" + str(contact.fixtureB.body.position.x) + ", " + str(contact.fixtureB.body.position.y) + ")")
         self.can_jump = True
     def EndContact(self, contact):
         pass
@@ -141,10 +144,10 @@ world = b2World(contactListener = listener, gravity=fast_grav, doSleep=True)
 if game_mode == 2:
     world.gravity = no_grav
 
-p_width = 0.75
-p_height = 0.75
+p_width = 0.6
+p_height = 0.6
 
-p_body = world.CreateDynamicBody(position=(p_width * 2.5, screenToWorld(height)/2), userData = Object("Player"))
+p_body = world.CreateDynamicBody(position=(p_width * 2.5, screenToWorld(height)/2), userData = Object("Player"), fixedRotation = True)
 p_fixture = p_body.CreatePolygonFixture(box=(p_width,p_height), density=1, friction=0.3)
 
 g_width = screenToWorld(width)/2
@@ -185,7 +188,7 @@ while True:
     # Draw a black filled box to clear the image.
     draw.rectangle((0, 0, width, height), outline=0, fill="#000000")
 
-    #Static mode controls
+    # Static mode controls
     if game_mode == 2:
         if buttonB.value and not buttonA.value:
             p_body.linearVelocity = up 
@@ -195,7 +198,7 @@ while True:
             p_body.linearVelocity = stop
         if buttonA.value and buttonB.value:
             p_body.linearVelocity = stop
-    #Jump mode controls
+    # Jump mode controls
     else:
         if buttonB.value and not buttonA.value:
             if listener.can_jump:
