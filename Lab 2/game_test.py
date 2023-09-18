@@ -196,7 +196,7 @@ spawnRate = 30
 # Parameters to determine time
 timer = 0
 # Fixed timer parameters
-fixedWidth = 10
+# fixedWidth = 10
 Sx1 = 0
 Sy1 = 0
 Sy2 = Sy1 + worldToScreen(g_height)
@@ -298,7 +298,7 @@ while game:
     # Determine size of timer bar based on time delta
     curr = dt.datetime.now()
     delta = int((curr - start).total_seconds())
-    Sscale = (delta*(width-fixedWidth))/totalSec
+    Sscale = (delta * width)/totalSec
 
     # Reset timer when it equals total
     if delta == totalSec:
