@@ -8,7 +8,7 @@ import adafruit_rgb_display.st7789 as st7789
 from Box2D import *
 from time import strftime
 import random
-from datetime import datetime, timedelta
+import datetime as dt
 
 # Box2D setup: 
 # 1) Download conda: wget https://github.com/conda-forge/miniforge/releases/download/23.3.1-1/Mambaforge-23.3.1-1-Linux-aarch64.sh
@@ -200,7 +200,7 @@ fixedWidth = 10
 Sx1 = 0
 Sy1 = 0
 Sy2 = Sy1 + worldToScreen(g_height)
-totalSec = 120
+totalSec = 60
 Scolor = "#FFFFFF"
 
 # Add score counter
@@ -213,11 +213,17 @@ asteroids = []
 # Game loop toggle
 game = True
 
+# Helper functions
 def drawRect(body,o_width,o_height,color):
     pos = (worldToScreen(body.position.x), height - worldToScreen(body.position.y))
     t_width = worldToScreen(o_width)
     t_height = worldToScreen(o_height)
     draw.rectangle((pos[0] - t_width, pos[1] - t_height, pos[0] + t_width, pos[1] + t_height), outline=0, fill=color)
+
+def round_seconds(obj: dt.datetime) -> dt.datetime:
+    if obj.microsecond >= 500_000:
+        obj += dt.timedelta(seconds=1)
+    return obj.replace(microsecond=0)
 
 while game:
     # Draw a black filled box to clear the image.
@@ -285,15 +291,14 @@ while game:
     drawRect(g_body,g_width,g_height,"#36005c")
     drawRect(g_body2,g_width,g_height,"#36005c")
 
-    # record time at start of timer
+    # Record time at start of timer, rounding to nearest second
     if ticks == 1:
-        start = datetime.now()
+        start = round_seconds(dt.datetime.now())
 
-    # Draw timer bar at the top
-    curr = datetime.now()
+    # Determine size of timer bar based on time delta
+    curr = dt.datetime.now()
     delta = int((curr - start).total_seconds())
     Sscale = (delta*(width-fixedWidth))/totalSec
-    # timer = timer+1/15
 
     # Reset timer when it equals total
     if delta == totalSec:
@@ -307,9 +312,10 @@ while game:
     
     Sshape = [Sx1, Sy1, Sx2, Sy2]
     
+    # Draw timer bar
     draw.rectangle(Sshape, outline=0, fill=Scolor)
 
-    # Draw the score on the screen
+    # Draw score text
     score_text = f"Score: {score}"
     draw.text((width - worldToScreen(g_height), Sy2 * 1.5), score_text, font=score_font, fill="#FFFFFF", anchor = 'ra')
 
