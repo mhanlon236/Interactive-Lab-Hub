@@ -7,6 +7,8 @@ import adafruit_rgb_display.st7789 as st7789
 
 from Box2D import *
 from time import strftime
+import random
+from datetime import datetime, timedelta
 
 # Box2D setup: 
 # 1) Download conda: wget https://github.com/conda-forge/miniforge/releases/download/23.3.1-1/Mambaforge-23.3.1-1-Linux-aarch64.sh
@@ -66,6 +68,7 @@ x = 0
 # Some other nice fonts to try: http://www.dafont.com/bitmap.php
 # font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 50)
 font = ImageFont.truetype("digital-dream/DIGITALDREAMNARROW.ttf", 40)
+score_font = ImageFont.truetype("digital-dream/DIGITALDREAMNARROW.ttf", 17)
 
 # Turn on the backlight
 backlight = digitalio.DigitalInOut(board.D22)
@@ -118,9 +121,17 @@ class myContactListener(b2ContactListener):
         b2ContactListener.__init__(self)
 
     def BeginContact(self, contact):
-        print('\n' + contact.fixtureA.body.userData.name + "-" + contact.fixtureB.body.userData.name + " Contact")
-        print(contact.fixtureA.body.userData.name + " pos: (" + str(contact.fixtureA.body.position.x) + ", " + str(contact.fixtureA.body.position.y) + ")")
-        print(contact.fixtureB.body.userData.name + " pos: (" + str(contact.fixtureB.body.position.x) + ", " + str(contact.fixtureB.body.position.y) + ")")
+        if (contact.fixtureA.body.userData.name == 'Asteroid'):
+            currVel = contact.fixtureA.body.linearVelocity
+            currVel[1] = currVel[1] * -1
+            contact.fixtureA.body.linearVelocity = currVel
+        if (contact.fixtureB.body.userData.name == 'Asteroid'):
+            currVel = contact.fixtureB.body.linearVelocity
+            currVel[1] = currVel[1] * -1
+            contact.fixtureB.body.linearVelocity = currVel
+        # print('\n' + contact.fixtureA.body.userData.name + "-" + contact.fixtureB.body.userData.name + " Contact")
+        # print(contact.fixtureA.body.userData.name + " pos: (" + str(contact.fixtureA.body.position.x) + ", " + str(contact.fixtureA.body.position.y) + ")")
+        # print(contact.fixtureB.body.userData.name + " pos: (" + str(contact.fixtureB.body.position.x) + ", " + str(contact.fixtureB.body.position.y) + ")")
         self.can_jump = True
     def EndContact(self, contact):
         pass
@@ -171,6 +182,7 @@ g_body2 = world.CreateStaticBody(
     userData = Object("Floor")
     )
 
+# Define game constants
 vel_iters, pos_iters = 6, 2
 time_step = 1/30
 up = (0,30)
@@ -178,13 +190,36 @@ down = (0,-30)
 stop = (0,0)
 jump = (0,100)
 
+# Time counter
+ticks = 0
+spawnRate = 30
+# Parameters to determine time
+timer = 0
+# Fixed timer parameters
+fixedWidth = 10
+Sx1 = 0
+Sy1 = 0
+Sy2 = Sy1 + worldToScreen(g_height)
+totalSec = 120
+Scolor = "#FFFFFF"
+
+# Add score counter
+score = 0
+
+# List of asteroids
+asteroids = []
+
+
+# Game loop toggle
+game = True
+
 def drawRect(body,o_width,o_height,color):
     pos = (worldToScreen(body.position.x), height - worldToScreen(body.position.y))
     t_width = worldToScreen(o_width)
     t_height = worldToScreen(o_height)
     draw.rectangle((pos[0] - t_width, pos[1] - t_height, pos[0] + t_width, pos[1] + t_height), outline=0, fill=color)
 
-while True:
+while game:
     # Draw a black filled box to clear the image.
     draw.rectangle((0, 0, width, height), outline=0, fill="#000000")
 
@@ -212,12 +247,36 @@ while True:
         if buttonA.value and buttonB.value:
             pass
 
+     # Decrease time between asteroid spawning
+    if (ticks % 180 == 0):
+        spawnRate -= 1
+
+    # Increment timer
+    ticks += 1
+    if (ticks % spawnRate == 0):
+        # Create asteroid every second
+        ast_body = world.CreateDynamicBody(position=(16, screenToWorld(height)/2 + (random.random() * 4 - 2)), userData = Object("Asteroid"), fixedRotation = True)
+        ast_fixture = ast_body.CreatePolygonFixture(box=(0.4,0.4), density=1, friction=0.3)
+        ast_body.linearVelocity = (random.random() * 10 - 25, random.random() * 30 - 15)
+        asteroids.append(ast_body)
+
+    # Destroy out of bounds asteroids
+    for asteroid in asteroids:
+        if (asteroid.position.x < 0):
+            world.DestroyBody(asteroid)
+            asteroids.remove(asteroid)
+
+    # Simulate physics
     world.Step(time_step, vel_iters, pos_iters)
     world.ClearForces()
 
     time_str = strftime("%I:%M:%S")
     # Draw time text
     draw.text((width/2, height/2), time_str, font=font, fill="#1f1f1f", anchor = 'mm')
+
+    # Draw asteroids
+    for asteroid in asteroids:
+        drawRect(asteroid, 0.4, 0.4, "#FF0000")
 
     # Draw player
     drawRect(p_body,p_width,p_height,"#00ff00")
@@ -226,6 +285,36 @@ while True:
     drawRect(g_body,g_width,g_height,"#36005c")
     drawRect(g_body2,g_width,g_height,"#36005c")
 
+    # record time at start of timer
+    if ticks == 1:
+        start = datetime.now()
+
+    # Draw timer bar at the top
+    curr = datetime.now()
+    delta = int((curr - start).total_seconds())
+    Sscale = (delta*(width-fixedWidth))/totalSec
+    # timer = timer+1/15
+
+    # Reset timer when it equals total
+    if delta == totalSec:
+        print(start)
+        print(curr)
+        print(spawnRate)
+        ticks = 0
+        score += 1
+
+    Sx2 = Sscale
+    
+    Sshape = [Sx1, Sy1, Sx2, Sy2]
+    
+    draw.rectangle(Sshape, outline=0, fill=Scolor)
+
+    # Draw the score on the screen
+    score_text = f"Score: {score}"
+    draw.text((width - worldToScreen(g_height), Sy2 * 1.5), score_text, font=score_font, fill="#FFFFFF", anchor = 'ra')
+
     # Display image.
     disp.image(image, rotation)
     time.sleep(time_step)
+
+
