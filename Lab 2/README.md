@@ -298,8 +298,7 @@ After successfully evading all asteroids for the entire two minutes, the player 
 
 # A Video for the Ideation
 
-[https://github.com/Ruiznogueras05CT/Interactive-Lab-Hub/assets/142849822/20c5cb45-cfc0-463c-832a-8ceb9f3833a0]
-
+https://github.com/gloriahu28/Interactive-Lab-Hub/assets/142931503/381b6d51-2dc6-4e0b-9ce4-f6261b349e4e
 
 # Part G.
 # Make a short video of your modified barebones PiClock
