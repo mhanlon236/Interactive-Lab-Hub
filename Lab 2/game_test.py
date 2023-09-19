@@ -177,7 +177,7 @@ jump = (0,100)
 # Time counter
 ticks = 0
 spawnRate = 35
-ast_easy = "#7d3e19"
+ast_easy = "#ab5929"
 ast_medium = "#ff5e00"
 ast_hard = "#ff0000"
 ast_color = ast_easy
@@ -190,7 +190,7 @@ speed = speed_easy
 Sx1 = 0
 Sy1 = 0
 Sy2 = Sy1 + worldToScreen(g_height)
-totalSec = 60
+totalSec = 5
 Scolor = "#FFFFFF"
 
 # Add score counter
@@ -232,11 +232,7 @@ while True:
         if buttonA.value and buttonB.value:
             p_body.linearVelocity = stop
 
-        # Decrease time between asteroid spawning
-        # if (ticks % 180 == 0):
-        #     spawnRate -= 1
-
-        # Increment timer, spawn asteroids
+        # Increment timer
         ticks += 1
 
         # Choose asteroid difficulty
@@ -253,7 +249,7 @@ while True:
         data.color = ast_color
 
         if (ticks % spawnRate == 0):
-            # Create asteroid every second
+            # Create asteroid
             ast_body = world.CreateDynamicBody(position=(16, screenToWorld(height)/2 + (random.random() * 4 - 2)), userData = data, fixedRotation = True)
             ast_fixture = ast_body.CreatePolygonFixture(box=(0.4,0.4), density=1, friction=0.3)
             ast_body.linearVelocity = ((random.random() * 10 - 25)*speed, (random.random() * 30 - 15)*speed)
