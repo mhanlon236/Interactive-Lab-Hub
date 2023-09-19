@@ -244,6 +244,15 @@ Demonstration: https://www.youtube.com/watch?v=f9iNFnLorkc
 
 2. Look at and give feedback on the Part G. for at least 2 other people in the class (and get 2 people to comment on your Part G!)
 
+## Feedback recieved for Lab 1
+
+Gloria: I really liked your sketches; they are easy to understand and follow. It’s enjoyable to see how your background changes by time and the colors you chose are great, accessible and visually appealing. The button toggle simulations are super interesting. I’m wondering if there are titles or word descriptions on the screen as the color changes. I’m looking forward to seeing your next design! 
+
+Yifan: I think it's great to carry more information through color, because I think there's a lot of design that we can do with color to make this product look cooler, and color can change the design of human-computer interaction to a great extent.
+
+Kenneth: I thought the UI was simple but very pleasant to the eye. The colors and font you chose were very soothing and the use of APIs was cool. I will say the interactions are limited and it is clear the interaction is mainly to showcase your project for the demo. Maybe you could change the colors through interaction.
+
+
 # Lab 2 Part 2
 
 Pull Interactive Lab Hub updates to your repo.
