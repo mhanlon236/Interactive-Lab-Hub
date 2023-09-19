@@ -1,5 +1,5 @@
 # Interactive Prototyping: The Clock of Pi
-**NAMES OF COLLABORATORS HERE**
+**No collaborators for Part 1**
 
 Does it feel like time is moving strangely during this semester?
 
@@ -254,4 +254,64 @@ As always, make sure you document contributions and ideas from others explicitly
 
 You are permitted (but not required) to work in groups and share a turn in; you are expected to make equal contribution on any group work you do, and N people's group project should look like N times the work of a single person's lab. What each person did should be explicitly documented. Make sure the page for the group turn in is linked to your Interactive Lab Hub page. 
 
+# Interactive Prototyping: The Game of Pi
 
+Gilberto Ruiz (ger83), Michael Hanlon (mph99), Kenneth Lee (kml343), Gloria Hu (rh692), Yifan Yu (yy2253)
+
+# Part 1.
+# Sketch and brainstorm further interactions and features you would like for your clock
+# Ideation and Diagrams
+
+![first image](https://github.com/Ruiznogueras05CT/Interactive-Lab-Hub/assets/142849822/7c300d80-4855-44c0-b40d-d2528adf6520)
+
+The player must dodge asteroids for a duration of two minutes. By pressing two buttons, they can move up or down to evade them.
+
+![second image](https://github.com/Ruiznogueras05CT/Interactive-Lab-Hub/assets/142849822/e5534783-c00c-4da3-aae7-44b2e4a27f0b)
+
+
+This image depicts the player having successfully avoided the asteroids and continuing their movement.
+
+![third image](https://github.com/Ruiznogueras05CT/Interactive-Lab-Hub/assets/142849822/242c7058-a0ac-43c9-9527-7d0f821808e1)
+
+![fourth image](https://github.com/Ruiznogueras05CT/Interactive-Lab-Hub/assets/142849822/6c90dd25-07fd-447d-879f-55c6a01629d5)
+
+In Scenario 1, if the player collides with any asteroid, an explosion occurs, it's a game over.
+
+![fifth image](https://github.com/Ruiznogueras05CT/Interactive-Lab-Hub/assets/142849822/c36faf6f-092f-469c-bd20-215d456fcb9f)
+
+![sixth image](https://github.com/Ruiznogueras05CT/Interactive-Lab-Hub/assets/142849822/1eb34749-a6ef-4b5e-8312-a228ea3382d3)
+
+In Scenario 2, the player adeptly dodges the asteroids, swiftly toggling up and down
+
+![seventh image](https://github.com/Ruiznogueras05CT/Interactive-Lab-Hub/assets/142849822/7427630a-1345-4265-9677-44a8d4de0fae)
+
+After successfully evading all asteroids for the entire two minutes, the player wins!
+
+# A Video for the Ideation
+
+[https://github.com/Ruiznogueras05CT/Interactive-Lab-Hub/assets/142849822/20c5cb45-cfc0-463c-832a-8ceb9f3833a0]
+
+
+# Part G.
+# Make a short video of your modified barebones PiClock
+
+# Losing Example
+In this situation, you're playing the game and crashed on one of the projectiles
+
+
+[https://github.com/Ruiznogueras05CT/Interactive-Lab-Hub/assets/142849822/01a62e0d-2fb0-4a32-ab82-22375ef270aa]
+
+
+# Win Example
+In this situation, if you've survived for a minute, then you will score a point and the projectiles will move faster and change color
+
+[https://github.com/Ruiznogueras05CT/Interactive-Lab-Hub/assets/142849822/ef73f220-5a90-4f48-8a5d-2b64557ce2cb]
+
+# Code for game implementation in `game_test.py`
+To run the game code, box2d-py must be set up with Conda: 
+1) Download conda: wget https://github.com/conda-forge/miniforge/releases/download/23.3.1-1/Mambaforge-23.3.1-1-Linux-aarch64.sh
+2) Make executable: chmod -v +x Mambaforge*.sh
+3) Install conda: ./Mambaforge-23.3.1-1-Linux-aarch64.sh
+4) Make conda environment with Box2D: conda create -n pybox2d -c conda-forge python=3.9 box2d-py
+5) Activate conda environment: conda activate pybox2d
+6) Install lab 2 requirements in conda environment: pip install -r requirements.txt
