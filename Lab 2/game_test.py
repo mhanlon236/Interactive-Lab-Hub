@@ -337,22 +337,28 @@ while True:
     disp.image(image, rotation)
 
     # Loop until user plays again
+    tick = 0
     while True:
-        if buttonB.value and not buttonA.value:
-            break
-        if buttonA.value and not buttonB.value:
-            break
-        if not buttonA.value and not buttonB.value:
-            break
-        if buttonA.value and buttonB.value:
-            pass
+        # Make user wait a bit before reseting
+        if tick > (0.6 / time_step):
+            if buttonB.value and not buttonA.value:
+                break
+            if buttonA.value and not buttonB.value:
+                break
+            if not buttonA.value and not buttonB.value:
+                break
+            if buttonA.value and buttonB.value:
+                pass
 
         for asteroid in asteroids:
             asteroids.remove(asteroid)
             world.DestroyBody(asteroid)
+
+        tick += 1
         
         world.Step(time_step, vel_iters, pos_iters)
         world.ClearForces()
+        time.sleep(time_step)
     
     # Reset player position
     p_body.position = p_start
