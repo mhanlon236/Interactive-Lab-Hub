@@ -81,24 +81,6 @@ buttonB = digitalio.DigitalInOut(board.D24)
 buttonA.switch_to_input()
 buttonB.switch_to_input()
 
-# Write intro text
-draw.text((width/2, height/2), "Select", font=font, fill="#1f1f1f", anchor = 'mm')
-disp.image(image, rotation)
-
-game_mode = 0
-
-# Loop until user inputs game mode
-while game_mode == 0:
-    try:
-        # convert user input to int within range
-        game_mode = int(input('Choose game mode (1 = jump, 2 = static): '))
-        if game_mode > 2 or game_mode < 1:
-            raise ValueError
-    except ValueError:
-        # catch invalid game modes
-        print("Invalid game mode, try again")
-        game_mode = 0
-
 # Clear screen
 draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0))
 disp.image(image, rotation)
@@ -110,12 +92,14 @@ scale = 15
 
 class Object:
     name = ""
+    color = "#000000"
 
     def __init__(self, str):
         self.name = str
 
 class myContactListener(b2ContactListener):
     can_jump = False
+    die = False
 
     def __init__(self):
         b2ContactListener.__init__(self)
@@ -125,10 +109,14 @@ class myContactListener(b2ContactListener):
             currVel = contact.fixtureA.body.linearVelocity
             currVel[1] = currVel[1] * -1
             contact.fixtureA.body.linearVelocity = currVel
+            if (contact.fixtureB.body.userData.name == 'Player'):
+                self.die = True
         if (contact.fixtureB.body.userData.name == 'Asteroid'):
             currVel = contact.fixtureB.body.linearVelocity
             currVel[1] = currVel[1] * -1
             contact.fixtureB.body.linearVelocity = currVel
+            if (contact.fixtureA.body.userData.name == 'Player'):
+                self.die = True
         # print('\n' + contact.fixtureA.body.userData.name + "-" + contact.fixtureB.body.userData.name + " Contact")
         # print(contact.fixtureA.body.userData.name + " pos: (" + str(contact.fixtureA.body.position.x) + ", " + str(contact.fixtureA.body.position.y) + ")")
         # print(contact.fixtureB.body.userData.name + " pos: (" + str(contact.fixtureB.body.position.x) + ", " + str(contact.fixtureB.body.position.y) + ")")
@@ -151,24 +139,20 @@ no_grav = (0,0)
 # Choose input mode
 
 listener = myContactListener()
-world = b2World(contactListener = listener, gravity=fast_grav, doSleep=True)
-if game_mode == 2:
-    world.gravity = no_grav
+world = b2World(contactListener = listener, gravity=no_grav, doSleep=True)
 
 p_width = 0.6
 p_height = 0.6
+p_start = (p_width * 2.5, screenToWorld(height)/2)
 
-p_body = world.CreateDynamicBody(position=(p_width * 2.5, screenToWorld(height)/2), userData = Object("Player"), fixedRotation = True)
+p_body = world.CreateDynamicBody(position=p_start, userData = Object("Player"), fixedRotation = True)
 p_fixture = p_body.CreatePolygonFixture(box=(p_width,p_height), density=1, friction=0.3)
 
 g_width = screenToWorld(width)/2
 g_height = 0.5
 
-g_top = screenToWorld(height) + g_height
-g_bot = g_height
-if game_mode == 2:
-    g_top = screenToWorld(height)
-    g_bot = 0
+g_top = screenToWorld(height)
+g_bot = 0
 
 g_body = world.CreateStaticBody(
     position=(screenToWorld(width) / 2, g_top),
@@ -192,11 +176,17 @@ jump = (0,100)
 
 # Time counter
 ticks = 0
-spawnRate = 30
-# Parameters to determine time
-timer = 0
+spawnRate = 35
+ast_easy = "#7d3e19"
+ast_medium = "#ff5e00"
+ast_hard = "#ff0000"
+ast_color = ast_easy
+speed_easy = 0.7
+speed_medium = 0.85
+speed_hard = 0.95
+speed = speed_easy
+
 # Fixed timer parameters
-# fixedWidth = 10
 Sx1 = 0
 Sy1 = 0
 Sy2 = Sy1 + worldToScreen(g_height)
@@ -214,6 +204,7 @@ asteroids = []
 game = True
 
 # Helper functions
+
 def drawRect(body,o_width,o_height,color):
     pos = (worldToScreen(body.position.x), height - worldToScreen(body.position.y))
     t_width = worldToScreen(o_width)
@@ -225,12 +216,13 @@ def round_seconds(obj: dt.datetime) -> dt.datetime:
         obj += dt.timedelta(seconds=1)
     return obj.replace(microsecond=0)
 
-while game:
-    # Draw a black filled box to clear the image.
-    draw.rectangle((0, 0, width, height), outline=0, fill="#000000")
+while True:
 
-    # Static mode controls
-    if game_mode == 2:
+    while game:
+        # Draw a black filled box to clear the image.
+        draw.rectangle((0, 0, width, height), outline=0, fill="#000000")
+
+        # Static mode controls
         if buttonB.value and not buttonA.value:
             p_body.linearVelocity = up 
         if buttonA.value and not buttonB.value:
@@ -239,88 +231,139 @@ while game:
             p_body.linearVelocity = stop
         if buttonA.value and buttonB.value:
             p_body.linearVelocity = stop
-    # Jump mode controls
-    else:
-        if buttonB.value and not buttonA.value:
-            if listener.can_jump:
-                listener.can_jump = False
-                print('Jump!')
-                p_body.linearVelocity = jump 
-        if buttonA.value and not buttonB.value:
-            pass
-        if not buttonA.value and not buttonB.value:
-            pass
-        if buttonA.value and buttonB.value:
-            pass
 
-     # Decrease time between asteroid spawning
-    if (ticks % 180 == 0):
-        spawnRate -= 1
+        # Decrease time between asteroid spawning
+        # if (ticks % 180 == 0):
+        #     spawnRate -= 1
 
-    # Increment timer
-    ticks += 1
-    if (ticks % spawnRate == 0):
-        # Create asteroid every second
-        ast_body = world.CreateDynamicBody(position=(16, screenToWorld(height)/2 + (random.random() * 4 - 2)), userData = Object("Asteroid"), fixedRotation = True)
-        ast_fixture = ast_body.CreatePolygonFixture(box=(0.4,0.4), density=1, friction=0.3)
-        ast_body.linearVelocity = (random.random() * 10 - 25, random.random() * 30 - 15)
-        asteroids.append(ast_body)
+        # Increment timer, spawn asteroids
+        ticks += 1
 
-    # Destroy out of bounds asteroids
+        # Choose asteroid difficulty
+        if (score == 1):
+            ast_color = ast_medium
+            speed = speed_medium
+            spawnRate = 22
+        if (score > 1):
+            ast_color = ast_hard
+            speed = speed_hard
+            spawnRate = 17
+        # Set asteroid data
+        data = Object("Asteroid")
+        data.color = ast_color
+
+        if (ticks % spawnRate == 0):
+            # Create asteroid every second
+            ast_body = world.CreateDynamicBody(position=(16, screenToWorld(height)/2 + (random.random() * 4 - 2)), userData = data, fixedRotation = True)
+            ast_fixture = ast_body.CreatePolygonFixture(box=(0.4,0.4), density=1, friction=0.3)
+            ast_body.linearVelocity = ((random.random() * 10 - 25)*speed, (random.random() * 30 - 15)*speed)
+            asteroids.append(ast_body)
+
+        # Destroy out of bounds asteroids
+        for asteroid in asteroids:
+            if (asteroid.position.x < 0):
+                asteroids.remove(asteroid)
+                world.DestroyBody(asteroid)
+
+        # Simulate physics
+        world.Step(time_step, vel_iters, pos_iters)
+        world.ClearForces()
+
+        time_str = strftime("%I:%M:%S")
+        # Draw time text
+        draw.text((width/2, height/2), time_str, font=font, fill="#0f0f0f", anchor = 'mm')
+
+        # Draw asteroids
+        for asteroid in asteroids:
+            drawRect(asteroid, 0.4, 0.4, asteroid.userData.color)
+
+        # Draw player
+        drawRect(p_body,p_width,p_height,"#00ff00")
+
+        # Draw ground (if visible)
+        drawRect(g_body,g_width,g_height,"#36005c")
+        drawRect(g_body2,g_width,g_height,"#36005c")
+
+        # Record time at start of timer, rounding to nearest second
+        if ticks == 1:
+            start = round_seconds(dt.datetime.now())
+
+        # Determine size of timer bar based on time delta
+        curr = dt.datetime.now()
+        delta = int((curr - start).total_seconds())
+        Sscale = (delta * width)/totalSec
+
+        # Reset timer when it equals total
+        if delta == totalSec:
+            print(start)
+            print(curr)
+            print(spawnRate)
+            ticks = 0
+            score += 1
+
+        Sx2 = Sscale
+        
+        Sshape = [Sx1, Sy1, Sx2, Sy2]
+        
+        # Draw timer bar
+        draw.rectangle(Sshape, outline=0, fill=Scolor)
+
+        # Draw score text
+        score_text = f"Score: {score}"
+        draw.text((width - worldToScreen(g_height), Sy2 * 1.5), score_text, font=score_font, fill="#FFFFFF", anchor = 'ra')
+
+        # Check if player is alive
+        if listener.die:
+            listener.die = False
+            game = False
+
+        # Display image.
+        disp.image(image, rotation)
+        time.sleep(time_step)
+
+    # Clear asteroids
     for asteroid in asteroids:
-        if (asteroid.position.x < 0):
-            world.DestroyBody(asteroid)
-            asteroids.remove(asteroid)
-
-    # Simulate physics
+        asteroids.remove(asteroid)
+        world.DestroyBody(asteroid)
+    
     world.Step(time_step, vel_iters, pos_iters)
     world.ClearForces()
 
-    time_str = strftime("%I:%M:%S")
-    # Draw time text
-    draw.text((width/2, height/2), time_str, font=font, fill="#1f1f1f", anchor = 'mm')
-
-    # Draw asteroids
-    for asteroid in asteroids:
-        drawRect(asteroid, 0.4, 0.4, "#FF0000")
-
-    # Draw player
-    drawRect(p_body,p_width,p_height,"#00ff00")
-
-    # Draw ground (if visible)
-    drawRect(g_body,g_width,g_height,"#36005c")
-    drawRect(g_body2,g_width,g_height,"#36005c")
-
-    # Record time at start of timer, rounding to nearest second
-    if ticks == 1:
-        start = round_seconds(dt.datetime.now())
-
-    # Determine size of timer bar based on time delta
-    curr = dt.datetime.now()
-    delta = int((curr - start).total_seconds())
-    Sscale = (delta * width)/totalSec
-
-    # Reset timer when it equals total
-    if delta == totalSec:
-        print(start)
-        print(curr)
-        print(spawnRate)
-        ticks = 0
-        score += 1
-
-    Sx2 = Sscale
-    
-    Sshape = [Sx1, Sy1, Sx2, Sy2]
-    
-    # Draw timer bar
-    draw.rectangle(Sshape, outline=0, fill=Scolor)
-
-    # Draw score text
-    score_text = f"Score: {score}"
-    draw.text((width - worldToScreen(g_height), Sy2 * 1.5), score_text, font=score_font, fill="#FFFFFF", anchor = 'ra')
-
-    # Display image.
+    # Clear screen
+    draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0))
     disp.image(image, rotation)
-    time.sleep(time_step)
 
+    # Write death text
+    draw.text((width/2, height/3), "You Lose", font=font, fill="#FFFFFF", anchor = 'mm')
+    disp.image(image, rotation)
+    draw.text((width/2, 2*height/3), "Press To Play Again", font=score_font, fill="#FFFFFF", anchor = 'mm')
+    disp.image(image, rotation)
 
+    # Loop until user plays again
+    while True:
+        if buttonB.value and not buttonA.value:
+            break
+        if buttonA.value and not buttonB.value:
+            break
+        if not buttonA.value and not buttonB.value:
+            break
+        if buttonA.value and buttonB.value:
+            pass
+
+        for asteroid in asteroids:
+            asteroids.remove(asteroid)
+            world.DestroyBody(asteroid)
+        
+        world.Step(time_step, vel_iters, pos_iters)
+        world.ClearForces()
+    
+    # Reset player position
+    p_body.position = p_start
+    score = 0
+    ticks = 0
+    # Reset asteroids
+    ast_color = ast_easy
+    speed = speed_easy
+    spawnRate = 35
+
+    game = True
