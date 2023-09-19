@@ -69,6 +69,7 @@ x = 0
 # font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 50)
 font = ImageFont.truetype("digital-dream/DIGITALDREAMNARROW.ttf", 40)
 score_font = ImageFont.truetype("digital-dream/DIGITALDREAMNARROW.ttf", 17)
+end_font = ImageFont.truetype("digital-dream/DIGITALDREAMNARROW.ttf", 22)
 
 # Turn on the backlight
 backlight = digitalio.DigitalInOut(board.D22)
@@ -190,7 +191,7 @@ speed = speed_easy
 Sx1 = 0
 Sy1 = 0
 Sy2 = Sy1 + worldToScreen(g_height)
-totalSec = 5
+totalSec = 60
 Scolor = "#FFFFFF"
 
 # Add score counter
@@ -330,7 +331,7 @@ while True:
     disp.image(image, rotation)
 
     # Write death text
-    draw.text((width/2, height/3), "You Lose", font=font, fill="#FFFFFF", anchor = 'mm')
+    draw.text((width/2, height/3), "Final Score: " + str(score), font=end_font, fill="#FFFFFF", anchor = 'mm')
     disp.image(image, rotation)
     draw.text((width/2, 2*height/3), "Press To Play Again", font=score_font, fill="#FFFFFF", anchor = 'mm')
     disp.image(image, rotation)
