@@ -67,9 +67,18 @@ x = 0
 # same directory as the python script!
 # Some other nice fonts to try: http://www.dafont.com/bitmap.php
 # font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 50)
-font = ImageFont.truetype("digital-dream/DIGITALDREAMNARROW.ttf", 40)
-score_font = ImageFont.truetype("digital-dream/DIGITALDREAMNARROW.ttf", 17)
-end_font = ImageFont.truetype("digital-dream/DIGITALDREAMNARROW.ttf", 22)
+try:
+    font = ImageFont.truetype("digital-dream/DIGITALDREAMNARROW.ttf", 40)
+except OSError:
+    font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 50)
+try:
+    score_font = ImageFont.truetype("digital-dream/DIGITALDREAMNARROW.ttf", 17)
+except OSError:
+    score_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 20)
+try:
+    end_font = ImageFont.truetype("digital-dream/DIGITALDREAMNARROW.ttf", 22)
+except OSError:
+    end_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 25)
 
 # Turn on the backlight
 backlight = digitalio.DigitalInOut(board.D22)
@@ -362,6 +371,11 @@ while True:
 
         time.sleep(time_step)
     
+    # Destroy bodies
+    for body in world.bodies:
+        if body.userData.name == "Asteroid":
+            world.DestroyBody(body)
+            
     # Reset player position
     p_body.position = p_start
     score = 0
