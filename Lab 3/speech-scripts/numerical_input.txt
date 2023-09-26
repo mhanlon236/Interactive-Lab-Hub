@@ -1,0 +1,138 @@
+################################################################################
+
+Press Ctrl+C to stop the recording
+
+################################################################################
+
+{
+
+  "partial" : ""
+
+}
+
+{
+
+  "partial" : ""
+
+}
+
+{
+
+  "partial" : ""
+
+}
+
+{
+
+  "partial" : "the"
+
+}
+
+{
+
+  "partial" : "the"
+
+}
+
+{
+
+  "partial" : "the"
+
+}
+
+{
+
+  "partial" : "the"
+
+}
+
+{
+
+  "partial" : "the nine"
+
+}
+
+{
+
+  "partial" : "the nine"
+
+}
+
+{
+
+  "partial" : "the nine"
+
+}
+
+{
+
+  "partial" : "the nine for"
+
+}
+
+{
+
+  "partial" : "the nine four two three"
+
+}
+
+{
+
+  "partial" : "the nine four two three"
+
+}
+
+{
+
+  "partial" : "the nine four two three"
+
+}
+
+{
+
+  "partial" : "the nine four two three"
+
+}
+
+{
+
+  "partial" : "the nine four two three"
+
+}
+
+{
+
+  "text" : "the nine four two three"
+
+}
+
+{
+
+  "partial" : ""
+
+}
+
+{
+
+  "partial" : ""
+
+}
+
+{
+
+  "partial" : ""
+
+}
+
+{
+
+  "partial" : ""
+
+}
+
+{
+
+  "partial" : ""
+
+}
+
