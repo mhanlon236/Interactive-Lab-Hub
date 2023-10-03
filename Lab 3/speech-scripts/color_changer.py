@@ -20,7 +20,9 @@ from vosk import Model, KaldiRecognizer
 
 import matplotlib as mpl
 import numpy as np
-
+import os
+import threading
+from subprocess import Popen
 # Configuration for CS and DC pins (these are FeatherWing defaults on M0/M4):
 cs_pin = digitalio.DigitalInOut(board.CE0)
 dc_pin = digitalio.DigitalInOut(board.D25)
@@ -145,8 +147,9 @@ try:
         color = ""
         party = False
         ticks = 0
-        max = 30
+        max = 5
         index = 0
+        first_party = True
         while True:
             data = q.get()
             if rec.AcceptWaveform(data):
@@ -158,7 +161,8 @@ try:
 
             if ("party" in(rec.PartialResult())):
                 party = True
-
+                
+                
             if ("red" in(rec.PartialResult()) or "read" in(rec.PartialResult())): 
                 color = "#FF0000"
                 party = False
@@ -239,6 +243,9 @@ try:
                 break
 
             if party:
+                if first_party:
+                    os.system('aplay ./celebration_2_mins.wav &')
+                    first_party = False
                 ticks += 1
                 if (ticks % max == 0):
                     index += 1
@@ -257,4 +264,3 @@ except KeyboardInterrupt:
     parser.exit(0)
 except Exception as e:
     parser.exit(type(e).__name__ + ": " + str(e))
-
