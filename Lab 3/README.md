@@ -205,25 +205,38 @@ The system should:
 
 *Document how the system works*
 
-*Include videos or screencaptures of both the system and the controller.*
+Using festival, the device speaks to the user, asking them to say its activation phase. Using vosk, it then listens for this phrase. Once it hears the phrase, it launches the "color_changer" program. This time it asks the user to say a color. When the user says a color, the program changes the screen to that color. If the user says "party", it cycles colors and plays a song. 
+
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%203/Lab%203%20Part%20Two.png)
+![alt text](https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%203/Lab%203%20Part%20Two%20(2).png)
+
+
+*Include videos or screencaptures of both the system and the controller.*  
+
+https://github.com/yifanwow/Interactive-Lab-Hub/assets/64716158/38ef1163-de09-4bc0-827f-04d8e8955a1c
+
 
 ## Test the system
 Try to get at least two people to interact with your system. (Ideally, you would inform them that there is a wizard _after_ the interaction, but we recognize that can be hard.)
 
 Answer the following:
 
-### What worked well about the system and what didn't?
-\*\**your answer here*\*\*
+Question: What worked well about the system and what didn't?
 
-### What worked well about the controller and what didn't?
+Answer:
+***The system exhibited proficiency in its color-changing mechanism, demonstrating seamless transitions. Additionally, the text-to-speech component effectively prompted users for their input. However, the speech-to-text functionality displayed significant limitations. Specifically, it often encountered challenges in accurately recognizing and interpreting spoken words.*** 
 
-\*\**your answer here*\*\*
+Question: What worked well about the controller and what didn't?
 
-### What lessons can you take away from the WoZ interactions for designing a more autonomous version of the system?
+Answer:
+***The controller's programming successfully rendered colors on the display, ensuring a vibrant user experience. However, the earlier mentioned deficiencies in the speech-to-text component extended to the controller, making the system's overall control less intuitive and at times challenging.*** 
 
-\*\**your answer here*\*\*
+Question: What lessons can you take away from the WoZ interactions for designing a more autonomous version of the system?
 
+Answer:
+***Drawing from the Wizard of Oz (WoZ) interactions, there are several insights that can guide the design of a more autonomous iteration. One possibility is leveraging the video input from the camera to gauge ambient light conditions, subsequently adjusting screen colors for optimal visibility. Furthermore, the system could be designed to autonomously cycle through an array of colors or even utilize the text-to-speech output to generate corresponding speech-to-text inputs, essentially enabling the system to "converse" with itself.*** 
 
-### How could you use your system to create a dataset of interaction? What other sensing modalities would make sense to capture?
+Question: How could you use your system to create a dataset of interaction? What other sensing modalities would make sense to capture?
 
-\*\**your answer here*\*\*
+Answer:
+***To curate a dataset of interactions, the system can be programmed to record user engagements. The incorporation of video and audio capturing capabilities, particularly through a webcam, would be instrumental in this endeavor. Additionally, the stored speech-to-text inputs can be systematically analyzed, leading to the creation of a comprehensive database spotlighting the most frequently used keywords. Beyond these, integrating video analytics can offer richer data. Another avenue worth exploring is the introduction of self-generated auditory cues, which could further enrich the interaction dataset.*** 
