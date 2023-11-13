@@ -1,6 +1,37 @@
 import paho.mqtt.client as mqtt
 import uuid
 import ssl
+import digitalio
+import board
+
+from adafruit_rgb_display.rgb import color565
+import adafruit_rgb_display.st7789 as st7789
+from PIL import Image, ImageDraw, ImageFont
+
+# The display uses a communication protocol called SPI.
+# SPI will not be covered in depth in this course. 
+# you can read more https://www.circuitbasics.com/basics-of-the-spi-communication-protocol/
+cs_pin = digitalio.DigitalInOut(board.CE0)
+dc_pin = digitalio.DigitalInOut(board.D25)
+reset_pin = None
+BAUDRATE = 64000000  # the rate  the screen talks to the pi
+# Create the ST7789 display:
+display = st7789.ST7789(
+    board.SPI(),
+    cs=cs_pin,
+    dc=dc_pin,
+    rst=reset_pin,
+    baudrate=BAUDRATE,
+    width=135,
+    height=240,
+    x_offset=53,
+    y_offset=40,
+)
+
+height =  display.height
+width = display.width 
+image = Image.new("RGB", (width, height))
+draw = ImageDraw.Draw(image)
 
 # the # wildcard means we subscribe to all subtopics of IDD
 topic = 'IDD/#'
@@ -19,9 +50,22 @@ def on_connect(client, userdata, flags, rc):
 
 # this is the callback that gets called each time a message is recived
 def on_message(cleint, userdata, msg):
-	print(f"topic: {msg.topic} msg: {msg.payload.decode('UTF-8')}")
 	# you can filter by topics
 	# if msg.topic == 'IDD/some/other/topic': do thing
+    if msg.topic == 'IDD/colors':
+        print(f"topic: {msg.topic} msg: {msg.payload.decode('UTF-8')}")
+        parts = msg.payload.decode('UTF-8').split(',')
+
+        # Convert the strings to integers
+        integers = [int(part) for part in parts]
+        colors = list(map(int, msg.payload.decode('UTF-8').split(',')))
+        a = colors[3]
+        colors = tuple(map(lambda x: int(255*(1-(a/65536))*255*(x/65536)), colors))
+        print(colors)
+        # display.fill(color565(colors[0], colors[1], colors[2]))
+        draw.rectangle((0, 0, width, height), fill=colors[:3])
+        display.image(image)
+        
 
 
 # Every client needs a random ID
