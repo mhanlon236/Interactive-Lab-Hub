@@ -2,6 +2,8 @@
 
 **NAMES OF COLLABORATORS HERE**
 
+Ben Setel, Kenneth Lee, Yifan Yu, Gloria Hu, Michael Hanlon
+
 ## Prep
 
 1. Pull the new changes from the class interactive-lab-hub. (You should be familiar with this already!)
@@ -94,7 +96,17 @@ Once connected, you should be able to see all the messages under the IDD topic. 
 <img width="890" alt="Screen Shot 2022-10-30 at 10 47 52 AM" src="https://user-images.githubusercontent.com/24699361/198885135-a1d38d17-a78f-4bb2-91c7-17d014c3a0bd.png">
 
 
+
 **\*\*\*Consider how you might use this messaging system on interactive devices, and draw/write down 5 ideas here.\*\*\***
+![Security System](https://github.com/gloriahu28/Interactive-Lab-Hub/assets/142931503/af299139-65e8-46a0-a45f-2bd1b68288b3)
+
+![Keypad to control remote servo](https://github.com/gloriahu28/Interactive-Lab-Hub/assets/142931503/3fa5109e-311a-42ad-b19e-8077e0e09ba7)
+
+![Automatic sump pump control - pi in a basement w_ capacitance sensor sends message to pi w_ sump pump control servo attached to it when water level reaches certain height](https://github.com/gloriahu28/Interactive-Lab-Hub/assets/142931503/20210346-fcb1-4442-bb5e-24297c27a54f)
+
+![Color Sensor](https://github.com/gloriahu28/Interactive-Lab-Hub/assets/142931503/9f90072e-421f-4589-b37d-db25767e78e1)
+
+![Gossip Tracker](https://github.com/gloriahu28/Interactive-Lab-Hub/assets/142931503/660ab426-53cc-4355-be7c-a7a5afb83e21)
 
 ### Part C
 ### Streaming a Sensor
@@ -116,8 +128,16 @@ Plug in the capacitive sensor board with the Qwiic connector. Use the alligator 
  ```
 
 **\*\*\*Include a picture of your setup here: what did you see on MQTT Explorer?\*\*\***
+<img src='https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%206/imgs/IMG_2308.jpeg'>
+<img src='https://github.com/bensetel/Interactive-Lab-Hub/blob/Fall2023/Lab%206/imgs/IMG_2309.jpeg'>
 
 **\*\*\*Pick another part in your kit and try to implement the data streaming with it.\*\*\***
+
+video:
+
+https://github.com/yifanwow/Interactive-Lab-Hub/assets/64716158/805b906e-7081-468e-9bd3-a027aa745b63
+
+
 
 
 ### Part D
@@ -148,19 +168,77 @@ By running the script, wou will find the two squares on the display. Half is sho
 
 **\*\*\*Can you set up the script that can read the color anyone else publish and display it on your screen?\*\*\***
 
+Answer:
+In order to get our colorreader.py script to correctly display the color, we had to modify color.py to include the alpha value in the message sent to the broker. After that, we created colorreader.py to read any messages sent to IDD/colors, parsed it into ints, and then converted it into RGB using the same math in color.py, and finally displaying this color to the screen.
+
+https://github.com/yifanwow/Interactive-Lab-Hub/assets/64716158/a710c57c-e0a1-451f-ba6a-06b7af899a0f
 
 ### Part E
 ### Make it your own
 
 Find at least one class (more are okay) partner, and design a distributed application together based on the exercise we asked you to do in this lab.
 
-**\*\*\*1. Explain your design\*\*\*** For example, if you made a remote controlled banana piano, explain why anyone would want such a thing.
+**\*\*\*1. Explain your design\*\*\***     
 
-**\*\*\*2. Diagram the architecture of the system.\*\*\*** Be clear to document where input, output and computation occur, and label all parts and connections. For example, where is the banana, who is the banana player, where does the sound get played, and who is listening to the banana music?
+**Purpose:**   
+  The design is for a network of Raspberry Pis equipped with microphones, distributed across different locations. This system is intended to listen for specific keywords or phrases. It can serve various purposes, like monitoring for security keywords in a sensitive area, detecting specific topics in a research setting, or even for interactive art installations.
 
-**\*\*\*3. Build a working prototype of the system.\*\*\*** Do think about the user interface: if someone encountered these bananas somewhere in the wild, would they know how to interact with them? Should they know what to expect?
+**Why It's Useful:**     
+  This kind of system can be invaluable in scenarios where real-time monitoring of certain keywords is necessary. For instance, in a security context, it could listen for words like "help" or "emergency." In a business setting, it might monitor customer feedback or mentions of specific products.
+
+
+**\*\*\*2. Diagram the architecture of the system.\*\*\***      
+
+
+**Components:**  
+- Raspberry Pi Units: These are the core of the system, each equipped with a microphone and placed in various locations.  
+- Central Control System: This is where the data from all Raspberry Pis is collected and processed. It could be a server or another Raspberry Pi.  
+
+**Process Flow:**  
+  Input: Audio input from the environment is captured by microphones attached to each Raspberry Pi.  
+
+**Computation:**  
+- Local Processing: Each Raspberry Pi processes the audio to detect the specific keywords.  
+- Central Processing: The central control system receives alerts from each Raspberry Pi when keywords are detected.  
+
+**Output:**  
+- Local Output: Each Raspberry Pi might give a local indication (like a light) when it detects a keyword.  
+- Central Output: The central control system logs the alerts, potentially triggering a response or notification.  
+
+**Connections:**  
+- Raspberry Pis are connected to the central control system via a network (Wi-Fi or Ethernet).  
+- The central control system may be connected to a broader network for remote monitoring or notifications.  
+
+
+
+**\*\*\*3. Build a working prototype of the system.\*\*\***     
+
+**Steps:**  
+- Set up the Raspberry Pis with microphones and install speech recognition software.  
+- Program each Pi to detect certain keywords and send an alert to the central system when these are detected.  
+- Establish a network connection for communication between the Raspberry Pis and the central control system.  
+- Develop a user interface for the central control system to monitor alerts and possibly interact with the system.  
+
+**User Interface Considerations:**    
+- The Raspberry Pis themselves don't need a direct user interface since they operate passively.    
+- The central control system should have an intuitive interface for monitoring and managing alerts.    
+- Indicators on the Raspberry Pis (like LEDs) could signal when they are active or have detected a keyword, providing some level of interaction for those in their vicinity.    
+
+**Testing and Refinement:**
+- Test the system in various environments to ensure the Raspberry Pis accurately detect the keywords and successfully communicate with the central system.  
+- Adjust sensitivity and filtering to reduce false positives and negatives.  
+- Ensure the system's user interface on the central control is clear and informative.  
+
+
+
 
 **\*\*\*4. Document the working prototype in use.\*\*\*** It may be helpful to record a Zoom session where you should the input in one location clearly causing response in another location.
 
-<!--**\*\*\*5. BONUS (Wendy didn't approve this so you should probably ignore it)\*\*\*** get the whole class to run your code and make your distributed system BIGGER.-->
 
+The three main scripts that are used in this demonstration are called "detect_word.py", "detector_script.py" and "lab6.sh". 
+
+https://github.com/yifanwow/Interactive-Lab-Hub/assets/64716158/22ede9b4-7280-4844-a58c-1b1457369398
+
+
+
+<!--**\*\*\*5. BONUS (Wendy didn't approve this so you should probably ignore it)\*\*\*** get the whole class to run your code and make your distributed system BIGGER.-->
