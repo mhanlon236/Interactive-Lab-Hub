@@ -113,15 +113,19 @@ try:
 
         rec = KaldiRecognizer(model, args.samplerate)
         start = time.time()
+        send_next = False
         while True:
             data = q.get()
+            if my_button.is_button_pressed() == True:
+                send_next = True
             if rec.AcceptWaveform(data):
                 res = rec.Result()
                 print(res)
-                if my_button.is_button_pressed() == True:
+                if send_next == True:
                     text_fn.write(res)
                     client.publish(topic, res.split(':')[1].split("}")[0])
                     print("Sent!")
+                    send_next = False
             else:
                 pass
 
