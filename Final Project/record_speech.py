@@ -79,6 +79,7 @@ topic = 'IDD/cool_table/robot'
 # os.system('cvlc --play-and-exit mi.mp3')
 # os.system('echo "Listening system activated:" | festival --tts')
 my_button = qwiic_button.QwiicButton()
+brightness = 100
 
 if my_button.begin() == False:
     print("\nThe Qwiic Button isn't connected to the system. Please check your connection", \
@@ -118,6 +119,7 @@ try:
             data = q.get()
             if my_button.is_button_pressed() == True:
                 send_next = True
+                my_button.LED_on(brightness)
             if rec.AcceptWaveform(data):
                 res = rec.Result()
                 print(res)
@@ -126,6 +128,7 @@ try:
                     client.publish(topic, res.split(':')[1].split("}")[0])
                     print("Sent!")
                     send_next = False
+                    my_button.LED_off()
             else:
                 pass
 
