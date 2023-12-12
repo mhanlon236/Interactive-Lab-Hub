@@ -3,10 +3,6 @@
 # prerequisites: as described in https://alphacephei.com/vosk/install and also python module `sounddevice` (simply run command `pip install sounddevice`)
 # Example usage using Dutch (nl) recognition model: `python test_microphone.py -m nl`
 # For more help run: `python test_microphone.py -h`
-
-import os
-import time
-import board
 import ssl
 
 import paho.mqtt.client as mqtt
@@ -75,7 +71,7 @@ client.connect(
     'farlab.infosci.cornell.edu',
     port=8883)
 
-topic = 'IDD/cool_table/robot'
+topic_2 = 'IDD/cool_table/robit_message'
 # os.system('cvlc --play-and-exit mi.mp3')
 # os.system('echo "Listening system activated:" | festival --tts')
 my_button = qwiic_button.QwiicButton()
@@ -113,7 +109,6 @@ try:
         print("#" * 80)
 
         rec = KaldiRecognizer(model, args.samplerate)
-        start = time.time()
         send_next = False
         while True:
             data = q.get()
@@ -124,8 +119,8 @@ try:
                 res = rec.Result()
                 print(res)
                 if send_next == True:
-                    text_fn.write(res)
-                    client.publish(topic, res.split(':')[1].split("}")[0])
+                    # text_fn.write(res)
+                    client.publish(topic_2, res.split(':')[1].split("}")[0])
                     print("Sent!")
                     send_next = False
                     my_button.LED_off()

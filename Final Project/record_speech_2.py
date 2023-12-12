@@ -87,6 +87,7 @@ if my_button.begin() == False:
     raise Exception("Button not connected")
     
 print("\nButton ready!")
+my_button.LED_off()
 
 
 try:
@@ -118,18 +119,24 @@ try:
 
                 rec = KaldiRecognizer(model, args.samplerate)
                 start = time.time()
+                ticks = 0
                 while send_next:
                     data = q.get()
-                    if not my_button.is_button_pressed():
-                        res = rec.PartialResult()
+                    if rec.AcceptWaveform(data):
+                        res = rec.Result()
                         print(res)
                         text_fn.write(res)
                         client.publish(topic, res.split(':')[1].split("}")[0])
                         print("Sent!")
-                        send_next = False
-                        my_button.LED_off()
+                        if ticks > 5:
+                            send_next = False
+                            my_button.LED_off()
+                    
+                    if not my_button.is_button_pressed():
+                        ticks += 1
                     else:
-                        pass
+                        ticks = 0
+                        
         else:
             pass
 
