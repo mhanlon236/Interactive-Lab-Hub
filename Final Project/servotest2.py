@@ -11,7 +11,7 @@ SERVOMIN = 150  # this is the 'minimum' pulse length count (out of 4096)
 SERVOMAX = 600  # this is the 'maximum' pulse length count (out of 4096)
 
 # Servo numbers for each servo at angle 0
-servo_numbers = [0, 1, 2, 12, 13, 14]
+servo_numbers = [0, 1, 2, 3, 12, 13, 14] # 0, 1, 2, 3, 12, 13, 14
 
 # Function to set the servo pulse length in seconds
 def set_servo_pulse(n, pulse):
@@ -34,7 +34,8 @@ def move_servo(servo_num, start, end, step):
 
         kit.servo[servo_num].angle = normalized_angle
         time.sleep(0.001)
-    print(normalized_angle)
+        # print(normalized_angle)
+    
 
 
 # Set all servos to angle 0
@@ -44,6 +45,9 @@ for servo_num in servo_numbers:
     if servo_num in [2, 13, 14]:
         normalized_angle = 180 - normalized_angle
     
+    if servo_num in [3]:
+        normalized_angle = 90 - normalized_angle
+    
     kit.servo[servo_num].angle = normalized_angle
 
 # Main loop
@@ -51,6 +55,8 @@ for servo_num in servo_numbers:
 Servo num 0 is the left hand
 Servo num 1 is the left elbow
 Servo num 2 is the left shoulder
+
+Servo num 3 is the head 
 
 Servo num 14 is the right hand
 Servo num 13 is the right elbow

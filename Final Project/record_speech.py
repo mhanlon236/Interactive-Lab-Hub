@@ -3,6 +3,10 @@
 # prerequisites: as described in https://alphacephei.com/vosk/install and also python module `sounddevice` (simply run command `pip install sounddevice`)
 # Example usage using Dutch (nl) recognition model: `python test_microphone.py -m nl`
 # For more help run: `python test_microphone.py -h`
+
+import os
+import time
+import board
 import ssl
 
 import paho.mqtt.client as mqtt
@@ -15,8 +19,6 @@ import queue
 
 import argparse
 import sys
-
-import qwiic_button 
 
 
 
@@ -71,18 +73,10 @@ client.connect(
     'farlab.infosci.cornell.edu',
     port=8883)
 
-topic_2 = 'IDD/cool_table/robit_message'
+topic = 'IDD/cool_table/robot'
 # os.system('cvlc --play-and-exit mi.mp3')
 # os.system('echo "Listening system activated:" | festival --tts')
-my_button = qwiic_button.QwiicButton()
-brightness = 100
 
-if my_button.begin() == False:
-    print("\nThe Qwiic Button isn't connected to the system. Please check your connection", \
-        file=sys.stderr)
-    raise Exception("Button not connected")
-    
-print("\nButton ready!")
 
 
 try:
@@ -109,21 +103,14 @@ try:
         print("#" * 80)
 
         rec = KaldiRecognizer(model, args.samplerate)
-        send_next = False
+        start = time.time()
         while True:
             data = q.get()
-            if my_button.is_button_pressed() == True:
-                send_next = True
-                my_button.LED_on(brightness)
             if rec.AcceptWaveform(data):
                 res = rec.Result()
                 print(res)
-                if send_next == True:
-                    # text_fn.write(res)
-                    client.publish(topic_2, res.split(':')[1].split("}")[0])
-                    print("Sent!")
-                    send_next = False
-                    my_button.LED_off()
+                text_fn.write(res)
+                client.publish(topic, res.split(':')[1].split("}")[0])
             else:
                 pass
 

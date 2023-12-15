@@ -6,6 +6,16 @@ import ssl
 import paho.mqtt.client as mqtt
 import uuid
 
+import RPi.GPIO as GPIO
+import time
+
+# Set the GPIO mode to BCM (Broadcom SOC channel)
+GPIO.setmode(GPIO.BCM)
+
+# Set up GPIO pin 26 as an output
+led_pin = 26
+GPIO.setup(led_pin, GPIO.OUT)
+
 global prev_message
 prev_message = ''
 
@@ -22,8 +32,6 @@ topic = 'IDD/cool_table/robot'
 client.subscribe(topic)
 
 
-
-
 def on_message(client, userdata, msg):
     global prev_message 
     message = msg.payload.decode('UTF-8')
@@ -32,7 +40,21 @@ def on_message(client, userdata, msg):
     f = open('tmp.txt', 'w+')
     f.write(message)
     f.close()
+
+    GPIO.output(led_pin, GPIO.HIGH)
     os.system('festival --tts tmp.txt')
+    GPIO.output(led_pin, GPIO.LOW)
+
     prev_message = message
 client.on_message = on_message
-client.loop_forever()
+
+try:
+    client.loop_forever()
+
+except KeyboardInterrupt:
+    # If Ctrl+C is pressed, turn off the LED and clean up
+    GPIO.output(led_pin, GPIO.LOW)
+    GPIO.cleanup()
+    print("Script terminated by user. LED turned off and GPIO cleaned up.")
+
+
